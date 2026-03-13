@@ -17,6 +17,21 @@ contract PasswordStoreTest is Test {
         passwordStore = new PasswordStore();
     }
 
-    // Write your tests below
-    // Naming convention: test_[Function]_[BehaviorBeingTested]
+    function test_setPassword_UpdatesPassword() public {
+        string memory newPassword = "my_secure_password";
+        vm.prank(owner);
+        passwordStore.setPassword(newPassword);
+        vm.prank(owner);
+        string memory storedPassword = passwordStore.getPassword();
+        assertEq(storedPassword, newPassword);
+    }
+
+    function test_setPassword_NotOwnerCanSet() public {
+        string memory attackerPassword = "hacked";
+        vm.prank(nonOwner);
+        passwordStore.setPassword(attackerPassword);
+        vm.prank(owner);
+        string memory storedPassword = passwordStore.getPassword();
+        assertEq(storedPassword, attackerPassword);
+    }
 }

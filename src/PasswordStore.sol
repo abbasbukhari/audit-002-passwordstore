@@ -8,13 +8,17 @@ pragma solidity 0.8.18;
  * You can update your password at any time.
  */
 contract PasswordStore {
+    // Custom error for unauthorized access
     error PasswordStore__NotOwner();
 
+    // State variables to store the owner's address and the password both as private
     address private s_owner;
     string private s_password;
 
+    // Event emitted when a new password is set
     event SetNewPassword();
 
+    // Constructor to set the owner of the contract
     constructor() {
         s_owner = msg.sender;
     }
@@ -23,6 +27,8 @@ contract PasswordStore {
      * @notice This function allows only the owner to set a new password.
      * @param newPassword The new password to set.
      */
+
+    // function to set a new password, can be called by anyone
     function setPassword(string memory newPassword) external {
         s_password = newPassword;
         emit SetNewPassword();
@@ -32,6 +38,8 @@ contract PasswordStore {
      * @notice This allows only the owner to retrieve the password.
      * @param newPassword The new password to set.
      */
+
+    // function to get the password, only callable by the owner
     function getPassword() external view returns (string memory) {
         if (msg.sender != s_owner) {
             revert PasswordStore__NotOwner();
