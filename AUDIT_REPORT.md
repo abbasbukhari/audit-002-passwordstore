@@ -115,15 +115,19 @@ There is no safe way to store a secret on a public blockchain. The fundamental a
 |---|---|---|
 | `test_setPassword_UpdatesPassword` | Pattern A | [x] Passing |
 | `test_setPassword_NotOwnerCanSet` | Pattern E | [x] Passing |
-| `test_getPassword_ownerCanRead` | Pattern B | [ ] |
-| `test_getPassword_nonOwnerReverts` | Pattern E | [ ] |
-| `test_passwordReadableViaStorageSlot` | vm.load | [ ] |
+| `test_getPassword_WithOwner` | Pattern B | [x] Passing |
+| `test_getPassword_WithoutOwner` | Pattern E | [x] Passing |
+| `test_passwordReadableViaStorageSlot` | vm.load | [x] Passing |
 
 ---
 
 ## Conclusion
 
-<!-- Write after all tests are complete. -->
+Two high-severity vulnerabilities were identified in `PasswordStore.sol`. The contract fails to deliver on both of its core promises: that only the owner can set a password, and that the password is private.
+
+F-01 is a missing access control check — `setPassword()` can be called by any address, allowing anyone to overwrite the owner's password. F-02 is a fundamental blockchain misconception — storing sensitive data in a `private` variable does not hide it from public storage reads.
+
+Both findings were confirmed with passing Foundry tests achieving 100% code coverage. The contract as written cannot be safely used for its stated purpose. The recommended path is to add an ownership check to `setPassword()` and to reconsider the architecture entirely — secrets cannot be stored safely on a public blockchain in plaintext.
 
 ---
 

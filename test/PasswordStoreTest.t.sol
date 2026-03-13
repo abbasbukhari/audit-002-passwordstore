@@ -34,4 +34,31 @@ contract PasswordStoreTest is Test {
         string memory storedPassword = passwordStore.getPassword();
         assertEq(storedPassword, attackerPassword);
     }
+
+    function test_getPassword_WithOwner() public {
+        string memory newPassword = "my_secure_password";
+        vm.prank(owner);
+        passwordStore.setPassword(newPassword);
+        vm.prank(owner);
+        string memory storedPassword = passwordStore.getPassword();
+        assertEq(storedPassword, newPassword);
+    }
+
+    function test_getPassword_WithoutOwner() public {
+        vm.expectRevert(PasswordStore.PasswordStore__NotOwner.selector);
+        vm.prank(nonOwner);
+        passwordStore.getPassword();
+    }
+
+    function test_passwordReadableViaStorageSlot() public {
+        string memory password = "my_secure_password";
+        vm.prank(owner);
+        passwordStore.setPassword(password);
+
+        bytes32 storedValue = vm.load(
+            address(passwordStore),
+            bytes32(uint256(1))
+        );
+        assertTrue(storedValue != bytes32(0));
+    }
 }
