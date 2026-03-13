@@ -1,66 +1,85 @@
-## Foundry
+# Audit 002 — PasswordStore
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+A security audit of the `PasswordStore` smart contract, conducted as part of the Blokan Phase 3 practice audit series.
 
-Foundry consists of:
+---
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## Original Contract
 
-## Documentation
+**Source:** [Cyfrin / 3-passwordstore-audit](https://github.com/Cyfrin/3-passwordstore-audit)
+**Author:** Patrick Collins / Cyfrin Updraft
+**Course:** Cyfrin Updraft — Smart Contract Security, Section 3
 
-https://book.getfoundry.sh/
+The contract was created by Patrick Collins specifically for auditor training. It contains intentionally planted bugs designed to teach security researchers how to identify access control vulnerabilities and blockchain storage misconceptions.
 
-## Usage
+> All credit for the original contract goes to Patrick Collins and the Cyfrin team.
 
-### Build
+---
 
-```shell
-$ forge build
-```
+## What This Repo Is
 
-### Test
+This repo is a hands-on security audit of `PasswordStore.sol` — a deliberately vulnerable contract used in the Cyfrin security course.
 
-```shell
-$ forge test
-```
+The audit covers:
+- Reading the contract and forming independent observations
+- Writing Foundry tests to prove or disprove suspected vulnerabilities
+- Documenting findings in audit report format
+- Comparing results against Patrick Collins' official audit report as a feedback loop
 
-### Format
+The goal is not to produce a production-ready audit, but to build the muscle memory of the auditing process: read → observe → test → report.
 
-```shell
-$ forge fmt
-```
+---
 
-### Gas Snapshots
+## The Contract
 
-```shell
-$ forge snapshot
-```
+`PasswordStore` is a simple on-chain password manager. The intended behavior:
 
-### Anvil
+- The deployer (owner) can store a private password via `setPassword()`
+- Only the owner can retrieve the password via `getPassword()`
 
-```shell
-$ anvil
-```
+**Contract:** [src/PasswordStore.sol](src/PasswordStore.sol)
+**Solidity:** `^0.8.18`
+**Complexity:** Low — short contract, subtle bugs
 
-### Deploy
+---
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
+## Audit Scope
 
-### Cast
+| Function | Description |
+|---|---|
+| `setPassword(string newPassword)` | Stores a new password on-chain |
+| `getPassword()` | Returns the stored password to the caller |
 
-```shell
-$ cast <subcommand>
-```
+---
 
-### Help
+## Test Environment
+
+Built with [Foundry](https://book.getfoundry.sh/).
 
 ```shell
-$ forge --help
-$ anvil --help
-$ cast --help
+# Install dependencies
+forge install
+
+# Build
+forge build
+
+# Run tests
+forge test
+
+# Run tests with verbose output
+forge test -vvv
+
+# Gas report
+forge test --gas-report
+
+# Coverage
+forge coverage
 ```
+
+---
+
+## Auditor
+
+**Abbas Bukhari**
+GitHub: [@abbasbukhari](https://github.com/abbasbukhari)
+Program: Blokan — Phase 3, Practice Audits
